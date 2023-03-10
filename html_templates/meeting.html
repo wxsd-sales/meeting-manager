@@ -1,0 +1,29 @@
+<html>
+<script src="https://unpkg.com/webex/umd/webex.min.js"></script>
+<script type="text/javascript">
+
+  const webex = (window.webex = Webex.init({
+      credentials: {
+        access_token: "NjExNGFkOTUtNzkzMC00ZWRjLTliZmEtNTBiNWFmMGEwOGIwMzI3YWI0ZWEtMzdh_P0A1_945db4e4-eded-4f74-8839-7c209cb3701b"
+      }
+  }));
+
+  /*
+  webex.meetings.register()
+    .then((data) => {
+      console.log(data);
+      //webex.meetings.sy
+    })
+    .catch(err => {
+      console.error(err);
+      alert(err);
+      throw err;
+  });*/
+
+  console.log('sync meetings');
+  webex.meetings.syncMeetings();
+  console.log(webex.meetings.meetingCollection.meetings);
+  console.log('done.')
+  
+</script>
+</html>
