@@ -2,28 +2,99 @@
 <script src="https://unpkg.com/webex/umd/webex.min.js"></script>
 <script type="text/javascript">
 
+  const queryString = window.location.search;
+  const urlParams   = new URLSearchParams(queryString);
+  const MEETING_ID  = urlParams.get('meeting_id');
+  const ACCESS_TOKEN = urlParams.get('access_token');
+
+
   const webex = (window.webex = Webex.init({
       credentials: {
-        access_token: "NjExNGFkOTUtNzkzMC00ZWRjLTliZmEtNTBiNWFmMGEwOGIwMzI3YWI0ZWEtMzdh_P0A1_945db4e4-eded-4f74-8839-7c209cb3701b"
+        access_token: ACCESS_TOKEN
       }
   }));
 
-  /*
   webex.meetings.register()
     .then((data) => {
       console.log(data);
-      //webex.meetings.sy
     })
     .catch(err => {
       console.error(err);
       alert(err);
       throw err;
-  });*/
+    });
+
+  function joinMeeting(event){
+    console.log('attempting meeting join');
+    event.meeting.join().then(() => {
+      console.log('done joining.')
+    });
+  }
+
+  webex.meetings.on('meeting:added', (event) => {
+    console.log('meeting:added - globalMeetingId:' +event.meeting.meetingInfo.globalMeetingId);
+    if(event.meeting.meetingInfo.globalMeetingId == MEETING_ID){
+        console.log('meeting state:' + event.meeting.state);
+        if(["IDLE", "LEFT"].indexOf(event.meeting.state) >= 0){
+          joinMeeting(event);
+        }
+        console.log('setting members event handler...')
+        event.meeting.members.on('members:update', (payload) => {
+          try{
+            console.log("<members:update> updated: " + payload.delta.updated.length + ", added: " + payload.delta.added.length);
+            for(let updated of payload.delta.updated){
+              console.log("updated.name: " + updated.name + ", status: " + updated.status);
+              if(updated.status == "IN_MEETING"){ // if the person is in the meeting
+                if(!updated.isHost && !updated.isSelf && !updated.isModerator){ // if the person is not me, or a host, or a mod
+                  let user;
+                  if(updated.participant.person.phoneNumber){
+                    console.log('user type is phone: ' + updated.participant.person.phoneNumber);
+                    user = updated.participant.person.phoneNumber.replace('+','');
+                  } else {
+                    console.log('user type is sip: ' + updated.participant.person.sipUrl);
+                    user = updated.participant.person.sipUrl.replace('sip:','');
+                  }
+                  let data = {user: user};
+                  fetch("/", {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify(data)
+                  }).then(res => {
+                    console.log("Request complete! response:", res);
+                    res.json().then((body) => {
+                      console.log(body);
+                      if(body['join_as'] == 'none'){
+                        console.log('removing member ' + updated.id);
+                        event.meeting.remove(updated.id)
+                      } else if (body['join_as'] == 'host'){
+                        console.log('unmuting member ' + updated.id);
+                        event.meeting.mute(updated.id, false);
+                      }
+                    }).catch((err) => {
+                      console.log(err);
+                      console.log('error. removing member ' + updated.id);
+                      event.meeting.remove(updated.id)
+                    });
+                  });
+                }
+              } else if(updated.status == "NOT_IN_MEETING" && updated.isSelf){
+                joinMeeting(event);
+              }
+            }
+          } catch (e){
+            console.log('members.on(members:update) - error:');
+            console.log(e);
+          }
+        });
+      }
+  })
 
   console.log('sync meetings');
-  webex.meetings.syncMeetings();
-  console.log(webex.meetings.meetingCollection.meetings);
-  console.log('done.')
+  webex.meetings.syncMeetings().then(() => {
+    console.log('meetingCollection.meetings:' + webex.meetings.meetingCollection.meetings.length);
+  });
+  
+  
   
 </script>
 </html>

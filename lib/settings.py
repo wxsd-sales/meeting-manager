@@ -5,6 +5,7 @@ load_dotenv()
 
 class Settings(object):
     port = int(os.environ.get("MY_APP_PORT"))
+    python_proc = os.environ.get("PYTHON_PROC_NAME")
     cookie_secret= os.environ.get("MY_COOKIE_SECRET")
     
     refresh_token = os.environ.get("WEBEX_INTEGRATION_REFRESH_TOKEN")
