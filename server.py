@@ -83,7 +83,7 @@ class MeetingManager(object):
                     logger.debug('Daily Reset Portion Complete.')
                 if last_meeting_cache == None or last_meeting_cache < (now - timedelta(seconds=meeting_cache_freq)):
                     logger.info('Retrieving meeting config from Mongo.')
-                    meeting_cache = list(self.db.meetings.find())
+                    meeting_cache = list(self.db.meetings.find({"dev":Settings.dev}))
                     last_meeting_cache = now
                 for meeting in meeting_cache:
                     logger.debug(meeting)
@@ -176,22 +176,26 @@ class ProxyHandler(tornado.web.RequestHandler):
         to avoid making a find_one() request to Mongo for every spam call that comes in.
         """
         res_val = ""
+        status_code = 200
         #logger.debug("ProxyHandler request.body:{0}".format(self.request.body))
         try:
             str_body = self.request.body.decode('utf-8')
             query = urllib.parse.parse_qs(str_body)
             #logger.debug(query)
             dest = query['DESTINATION_ALIAS'][0]
-            if dest.startswith('meeting.'):
+            if dest.startswith('meeting.') and status_code == 200:
                 meeting_keyword, phone_number, remainder = dest.split('.',2)
                 pin, remainder = remainder.split('@',1)
-                meeting = self.application.settings['db'].meetings.find_one({"phone_number":phone_number})
+                meeting = self.application.settings['db'].meetings.find_one({"phone_number":phone_number, "dev":Settings.dev})
                 caller = query['AUTHENTICATED_SOURCE_ALIAS'][0]
                 approved_call = None
                 if pin == meeting["host_pin"]:
                     approved_call = {caller : {"sip": meeting["sip"], "join_as":"host"}}
                 elif pin == meeting["guest_pin"]:
                     approved_call = {caller : {"sip": meeting["sip"], "join_as":"guest"}}
+                else:
+                    status_code = 502 #This is returned to expressway, next server on the list will be tried.  We use this as a workaround for Prod/Dev
+                    #i.e. if host/guest pins don't match prod, try dev server.
                 if approved_call:
                     Calls.approved.update(approved_call)
                     logger.info("approved_call:{}".format(approved_call))
@@ -212,7 +216,7 @@ class ProxyHandler(tornado.web.RequestHandler):
             #TODO: we're probably gonna want to change the print below to avoid filling logs with spam call exceptions
             traceback.print_exc()
         self.set_header('Content-Type', 'application/xml')
-        self.set_status(200)
+        self.set_status(status_code)
         self.write(res_val)
 
     
@@ -226,7 +230,7 @@ class WebexConnectHandler(tornado.web.RequestHandler):
         if jbody:
             dialed_number = jbody["dialed_number"].replace("+","")
             caller_number = jbody["caller_number"].replace("+","")
-            meeting = self.application.settings['db'].meetings.find_one({"phone_number":dialed_number})
+            meeting = self.application.settings['db'].meetings.find_one({"phone_number":dialed_number, "dev":Settings.dev})
             if meeting:
                 approved_call = None
                 if jbody["pin"] == meeting["host_pin"]:
@@ -260,7 +264,7 @@ def main():
             )
         db = MongoController()
         app.settings['db'] = db
-        xsi_manager = XSIManager()
+        xsi_manager = XSIManager(options.verbose)
         app.settings['xsi_manager'] = xsi_manager
         meeting_manager = MeetingManager(db, xsi_manager)
         app.settings['meeting_manager'] = meeting_manager

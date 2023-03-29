@@ -32,7 +32,6 @@ class MyQueue(object):
 
         logger.debug("MyQueue message:")
         logger.debug(message_dict)
-        logger.debug("Approved Calls:{}".format(Calls.approved))
         event = message_dict.get('xsi:Event', {})
         event_type = event.get('xsi:eventData',{}).get('@xsi1:type')
         if event_type == "xsi:CallHeldEvent":
@@ -41,12 +40,13 @@ class MyQueue(object):
             call = event.get('xsi:eventData',{}).get('xsi:call',{})
             logger.debug('call object:{0}'.format(call))
             remote_number = call.get('xsi:remoteParty',{}).get('xsi:address',{}).get('#text', '').replace('tel:','').replace('+','')
+            logger.info("Approved Calls:{}".format(Calls.approved))
             logger.info('remote_number:{0}'.format(remote_number))
             if remote_number in Calls.approved:
                 #TODO: Not here, but consider having the browser confirm after the user joins the meeting (and after unmuted if "host")
                 #      Then, pop the entry from Call.approved? The ttl will expire it eventually anyway, so maybe that's just extra work.
                 sip_destination = Calls.approved[remote_number]["sip"]
-                logger.info('sip_destination:{0}'.format(sip_destination))
+                logger.info('**sip_destination:{0}'.format(sip_destination))
                 xsi = wxcadm.XSICallQueue(target_id, org=self.webex.org)
                 attached_call = xsi.attach_call(call.get('xsi:callId'))
                 attached_call.transfer(address=sip_destination, type='blind')
@@ -82,7 +82,10 @@ class XSIConnector(object):
         return previously_subscribed_channels
 
 class XSIManager(object):
-    def __init__(self):
+    def __init__(self, verbose=False):
+        if verbose:
+            logger.setLevel(logging.DEBUG)
+            logger.debug("XSIManager Logs set to DEBUG.")
         self.executor = ThreadPoolExecutor(max_workers=10)
         self.token_refresher = TokenRefresher()
         self.access_token = None
