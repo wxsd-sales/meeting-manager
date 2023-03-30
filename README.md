@@ -110,6 +110,8 @@ WEBEX_INTEGRATION_REFRESH_TOKEN="REFRESH_TOKEN_FOR_ADMIN_USER_IN_YOUR_ORG_USING_
 MY_MONGO_URI="mongodb+srv://yourusername:yourpassword@yourcluster.abcde.mongodb.net/YOURDB?authSource=admin&retryWrites=true&w=majority"
 MY_MONGO_DB="YOURDB"
 ```
+4. Run
+```python3 server.py```
     
     
 ## Live Demo
