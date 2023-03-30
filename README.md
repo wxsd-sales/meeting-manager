@@ -36,7 +36,7 @@ The PSTN Flow:
 
 The SIP Flow:
 - Caller dials a string in the format "meeting.PHONENUMBER.PIN@ourexpressway.exampledomain.com"
-- The Cisco Expressway notifies our server (via Proxy) of the incoming call
+- The Cisco Expressway notifies our server (via Call Policy Service) of the incoming call
 - Our server redirects the call to the WxMeeting if the string and PIN are valid
 
 The Server:
