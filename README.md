@@ -1,9 +1,9 @@
 # Meeting Manager
- Welcome to our WXSD DEMO Repo! <!-- Keep this here --> 
+ Welcome to our Webex SD DEMO Repo! <!-- Keep this here --> 
  
-A "Trade Floor" application that can receive PSTN calls (Webex Connect) with custom IVR, and direct the caller to a WxMeeting (by way of WxCalling).  Can receive SIP calls from devices using a static dial string and direct them to the WxMeeting as well.
+A "Trade Floor" application that can receive PSTN calls (Webex Connect) with custom IVR, and direct the caller to a Webex Meeting (by way of Webex Calling).  Can receive SIP calls from devices using a static dial string and direct them to the Webex Meeting as well.
 
-This project was developed to provide a couple of methods for audio users to join a WxMeeting without using the native WxMeeting clients, and without being prompted to enter meeting access codes, or host pins.
+This project was developed to provide a couple of methods for audio users to join a Webex Meeting without using the native Webex Meeting clients, and without being prompted to enter meeting access codes, or host pins.
 
 [![Vidcast Overview](https://user-images.githubusercontent.com/19175490/228853418-d6ded84d-5ee2-4d50-85d8-11b8d9db29c8.png)](https://app.vidcast.io/share/39ebd946-ae0c-4dd9-af36-614305b5b4e3)
 
@@ -28,21 +28,21 @@ This project was developed to provide a couple of methods for audio users to joi
 ## Overview
 
 The PSTN Flow:
-- Caller dials a WxConnect number which triggers a WxConnect Flow.
-- WxConnect Flow collects DTMF input, and sends an HTTP POST with the caller number and entered digits to our server
-- WxConnect Flow patches the call to WxCalling Queue (empty)
-- Our server monitors the WxCalling Queue using XSI
-- When a call enters the Queue that matches the POST we received from the WxConnect Flow, we transfer the call to the WxMeeting
+- Caller dials a Webex Connect number which triggers a Webex Connect Flow.
+- Webex Connect Flow collects DTMF input, and sends an HTTP POST with the caller number and entered digits to our server
+- Webex Connect Flow patches the call to Webex Calling Queue (empty)
+- Our server monitors the Webex Calling Queue using XSI
+- When a call enters the Queue that matches the POST we received from the Webex Connect Flow, we transfer the call to the Webex Meeting
 
 The SIP Flow:
 - Caller dials a string in the format "meeting.PHONENUMBER.PIN@ourexpressway.exampledomain.com"
 - The Cisco Expressway notifies our server (via Call Policy Service) of the incoming call
-- Our server redirects the call to the WxMeeting if the string and PIN are valid
+- Our server redirects the call to the Webex Meeting if the string and PIN are valid
 
 The Server:
-- Our python server.py is listening for POST requests from WxConnect and the Cisco Expressway
-- Our python server.py is monitoring the WxCalling Queue
-- It is also managing the scheduled meetings via the WxMeetings REST API
+- Our python server.py is listening for POST requests from Webex Connect and the Cisco Expressway
+- Our python server.py is monitoring the Webex Calling Queue
+- It is also managing the scheduled meetings via the Webex Meetings REST API
 - Retrieving/Storing configuration information from/to MongoDB
 - Managing a playwright chromium subprocess to join the meetings and mute/unmute, admit/remove participants as needed
   
@@ -91,7 +91,7 @@ pip3 install pymongo[srv]
 pip3 install tornado==4.5.2
 pip3 install requests
 pip3 install requests-toolbelt
-pip3 install wxcadm
+pip3 install Webex cadm
 pip3 install cachetools
 ```
 
@@ -129,4 +129,4 @@ Distributed under the MIT License. See LICENSE for more information.
 
 ## Support
 
-Please contact the WXSD team at [wxsd@external.cisco.com](mailto:wxsd@external.cisco.com?subject=RepoName) for questions. Or for Cisco internal, reach out to us on Webex App via our bot globalexpert@webex.bot & choose "Engagement Type: API/SDK Proof of Concept Integration Development". 
+Please contact the Webex SD team at [Webex sd@external.cisco.com](mailto:Webex sd@external.cisco.com?subject=RepoName) for questions. Or for Cisco internal, reach out to us on Webex App via our bot globalexpert@webex.bot & choose "Engagement Type: API/SDK Proof of Concept Integration Development". 
