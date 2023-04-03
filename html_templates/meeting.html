@@ -31,6 +31,18 @@
     });
   }
 
+  function getUser(person){
+    let user;
+    if(person.phoneNumber){
+      console.log('user type is phone: ' + person.phoneNumber);
+      user = person.phoneNumber.replace('+','');
+    } else {
+      console.log('user type is sip: ' + person.sipUrl);
+      user = person.sipUrl.replace('sip:','');
+    }
+    return user;
+  }
+
   webex.meetings.on('meeting:added', (event) => {
     console.log('meeting:added - globalMeetingId:' +event.meeting.meetingInfo.globalMeetingId);
     if(event.meeting.meetingInfo.globalMeetingId == MEETING_ID){
@@ -46,21 +58,13 @@
               console.log("updated.name: " + updated.name + ", status: " + updated.status);
               if(updated.status == "IN_MEETING"){ // if the person is in the meeting
                 if(!updated.isHost && !updated.isSelf && !updated.isModerator){ // if the person is not me, or a host, or a mod
-                  let user;
-                  if(updated.participant.person.phoneNumber){
-                    console.log('user type is phone: ' + updated.participant.person.phoneNumber);
-                    user = updated.participant.person.phoneNumber.replace('+','');
-                  } else {
-                    console.log('user type is sip: ' + updated.participant.person.sipUrl);
-                    user = updated.participant.person.sipUrl.replace('sip:','');
-                  }
-                  let data = {user: user};
+                  let user = getUser(updated.participant.person);
                   fetch("/", {
                     method: "POST",
                     headers: {'Content-Type': 'application/json'}, 
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({user: user})
                   }).then(res => {
-                    console.log("Request complete! response:", res);
+                    console.log("/ user request complete! response:", res);
                     res.json().then((body) => {
                       console.log(body);
                       if(body['join_as'] == 'none'){
@@ -77,6 +81,29 @@
                     });
                   });
                 }
+              } else if(updated.status == "IN_LOBBY"){
+                  let user = getUser(updated.participant.person);
+                  fetch("/", {
+                    method: "POST",
+                    headers: {'Content-Type': 'application/json'}, 
+                    body: JSON.stringify({user: user})
+                  }).then(res => {
+                    console.log("/ user request complete! response:", res);
+                    res.json().then((body) => {
+                      console.log(body);
+                      if(body['join_as'] == 'none'){
+                        console.log('removing member ' + updated.id);
+                        event.meeting.remove(updated.id)
+                      } else {
+                        console.log('admitting member ' + updated.id);
+                        event.meeting.admit(updated.id);
+                      }
+                    }).catch((err) => {
+                      console.log(err);
+                      console.log('error. removing member ' + updated.id);
+                      event.meeting.remove(updated.id)
+                    });
+                  });
               } else if(updated.status == "NOT_IN_MEETING" && updated.isSelf){
                 joinMeeting(event);
               }
