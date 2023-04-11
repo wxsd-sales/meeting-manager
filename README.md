@@ -1,28 +1,10 @@
 # Meeting Manager
- Welcome to our Webex SD DEMO Repo! <!-- Keep this here --> 
- 
+  
 A "Trade Floor" application that can receive PSTN calls (Webex Connect) with custom IVR, and direct the caller to a Webex Meeting (by way of Webex Calling).  Can receive SIP calls from devices using a static dial string and direct them to the Webex Meeting as well.
 
 This project was developed to provide a couple of methods for audio users to join a Webex Meeting without using the native Webex Meeting clients, and without being prompted to enter meeting access codes, or host pins.
 
 [![Vidcast Overview](https://user-images.githubusercontent.com/19175490/228853418-d6ded84d-5ee2-4d50-85d8-11b8d9db29c8.png)](https://app.vidcast.io/share/39ebd946-ae0c-4dd9-af36-614305b5b4e3)
-
-<!-- Keep the following here -->  
- *_Everything included is for demo and Proof of Concept purposes only. Your use of the site is solely at your own risk. This site may contain links to third party content, which we do not warrant, endorse, or assume liability for. These demos are for Cisco Webex usecases, but are not Official Cisco Webex Branded demos._
-
-## Table of Contents <!-- Keep the following here -->  
-<!-- ⛔️ MD-MAGIC-EXAMPLE:START (TOC:collapse=true&collapseText=Click to expand) -->
-<details>
-<summary>(click to expand)</summary>
-    
-  * [Overview](#overview)
-  * [Setup](#setup)
-  * [Demo](#demo)
-  * [License](#license)  
-  * [Support](#support)
-
-</details>
-<!-- ⛔️ MD-MAGIC-EXAMPLE:END -->
 
 
 ## Overview
@@ -126,7 +108,12 @@ Check out our Vidcast recording, [here](https://app.vidcast.io/share/39ebd946-ae
 
 Distributed under the MIT License. See LICENSE for more information.
 
+## Disclaimer
 
+<!-- Keep the following here -->  
+Everything included is for demo and Proof of Concept purposes only. Your use of the site is solely at your own risk. This site may contain links to third party content, which we do not warrant, endorse, or assume liability for. These demos are for Cisco Webex usecases, but are not Official Cisco Webex Branded demos.
+ 
+ 
 ## Support
 
 Please contact the Webex SD team at [wxsd@external.cisco.com](mailto:wxsd@external.cisco.com?subject=RepoName) for questions. Or for Cisco internal, reach out to us on Webex App via our bot globalexpert@webex.bot & choose "Engagement Type: API/SDK Proof of Concept Integration Development". 
