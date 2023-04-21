@@ -106,7 +106,7 @@ Check out our Vidcast recording, [here](https://app.vidcast.io/share/39ebd946-ae
 
 ## License
 
-Distributed under the MIT License. See LICENSE for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Disclaimer
 
