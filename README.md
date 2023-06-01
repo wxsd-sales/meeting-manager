@@ -73,10 +73,9 @@ pip3 install pymongo[srv]
 pip3 install tornado==4.5.2
 pip3 install requests
 pip3 install requests-toolbelt
-pip3 install Webex cadm
+pip3 install wxcadm
 pip3 install cachetools
 ```
-
 2.  Clone this repo, and create a file named ```.env``` in the repo's root directory.
 3.  Populate the following environment variables to the .env file:
 ```
@@ -116,4 +115,4 @@ Everything included is for demo and Proof of Concept purposes only. Use of the s
  
 ## Support
 
-Please contact the Webex SD team at [wxsd@external.cisco.com](mailto:wxsd@external.cisco.com?subject=RepoName) for questions. Or for Cisco internal, reach out to us on Webex App via our bot globalexpert@webex.bot & choose "Engagement Type: API/SDK Proof of Concept Integration Development". 
+Please contact the Webex SD team at [wxsd@external.cisco.com](mailto:wxsd@external.cisco.com?subject=MeetingManager) for questions. Or for Cisco internal, reach out to us on Webex App via our bot globalexpert@webex.bot & choose "Engagement Type: API/SDK Proof of Concept Integration Development". 
